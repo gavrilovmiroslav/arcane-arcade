@@ -40,10 +40,10 @@ public static class EventSockets
             foreach (var interf in sock.GetInterfaces())
             {
                 var stringRep = $"{interf}";
-                if (stringRep.StartsWith("IEventSocket`1["))
+                if (stringRep.StartsWith("IReactsToEvent`1["))
                 {
                     Debug.Log(stringRep);
-                    var parts = stringRep.Replace("IEventSocket`1[", "").Replace("]", "").Split("+");
+                    var parts = stringRep.Replace("IReactsToEvent`1[", "").Replace("]", "").Split("+");
                     graph.Add($"    {sock} [shape=box]");
                     graph.Add($"    {parts[0]} -> {sock} [label=\"on {parts[1]}  \" fontsize=8.0 style=\"dashed\"]");
                 }

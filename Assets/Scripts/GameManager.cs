@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
             _Instantiated.Add(inst);
 
             AddFlingRequirements(inst);
-            inst.AddComponent<FlingController>();
+            inst.AddComponent<PlayerFlingController>();
             AddRigidbody(inst);
             inst.GetComponent<TurnBasedUnit>().ConnectController();
 

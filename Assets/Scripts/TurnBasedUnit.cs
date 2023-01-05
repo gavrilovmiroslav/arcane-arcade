@@ -67,7 +67,7 @@ public class TurnBasedUnit
 
     public void ConnectController()
     {
-        if (TryGetComponent<FlingController>(out FlingController controller))
+        if (TryGetComponent<PlayerFlingController>(out PlayerFlingController controller))
         {
             controller.OnFlingingStarted += React_OnFlingingStarted;
             controller.OnFlingCompleted += React_OnFlingCompleted;

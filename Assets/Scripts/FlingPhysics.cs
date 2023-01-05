@@ -21,7 +21,7 @@ public class FlingPhysics
     
     public void Start()
     {
-        if (TryGetComponent<FlingController>(out var flingController))
+        if (TryGetComponent<PlayerFlingController>(out var flingController))
         {
             flingController.OnFlingCompleted += React_OnFlingCompleted;
         }
@@ -41,6 +41,11 @@ public class FlingPhysics
     public void AddForce(Vector3 force)
     {
         _Speed = force;
+    }
+
+    public void StopMotion()
+    {
+        _Speed = Vector3.zero;
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -91,8 +96,8 @@ public class FlingPhysics
     {
         if (_Speed.magnitude > 0.04f)
         {
-            this.transform.position += _Speed * 1.75f * Time.deltaTime;
-            _Speed *= 0.98f;
+            this.transform.position += _Speed * 2.0f * Time.deltaTime;
+            _Speed *= 0.988f;
             return;
         }
         else

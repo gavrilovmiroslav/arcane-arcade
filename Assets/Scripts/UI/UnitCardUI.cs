@@ -58,7 +58,9 @@ public class UnitCardUI
     private void React_OnUnitChanged(TurnBasedUnit oldUnit, TurnBasedUnit newUnit)
     {
         if (newUnit != null)
-            Load(newUnit.Definition);
+        {
+            StartCoroutine(AnimateUnitChange(newUnit.Definition));
+        }            
         else
             GoOffscreen();
     }
@@ -83,6 +85,14 @@ public class UnitCardUI
     public void GoOnscreen()
     {
         this.transform.DOLocalMove(_OnscreenPivot, 0.25f);
+    }
+
+    protected IEnumerator AnimateUnitChange(UnitScriptable unit)
+    {
+        yield return this.transform.DOLocalMove(_OffscreenPivot, 0.25f).WaitForCompletion();
+        Load(unit);
+        yield return new WaitForSeconds(0.25f);
+        yield return this.transform.DOLocalMove(_OnscreenPivot, 0.25f).WaitForCompletion();
     }
 
     public void Load(UnitScriptable unit)

@@ -12,9 +12,11 @@ public class FlingCollisionManager
     public event IFlingCollisionPropertyChanged.FlingCollisionHappened OnFlingCollisionHappened;
     public event IFlingCollisionPropertyChanged.FlingCollisionChainDone OnFlingCollisionChainDone;
 
-    public float ChainWaitDuration = 1.0f;
+    public List<FlingPhysics> UnitsInMotion = new();
+    
+    public float ChainWaitDuration = 2.0f;
     public readonly Queue<FlingCollision> Collisions = new();
-
+    
     public void Awake()
     {
         Instance = this;
@@ -26,19 +28,49 @@ public class FlingCollisionManager
         OnFlingCollisionsCleared?.Invoke();
     }
 
+    public void AddMoving(FlingPhysics obj)
+    {
+        if (obj == null) return;
+        if (!UnitsInMotion.Contains(obj))
+            UnitsInMotion.Add(obj);
+    }
+
     public void AddCollision(FlingCollision collision)
     {
         Collisions.Enqueue(collision);
         OnFlingCollisionHappened?.Invoke(collision);
-        StartCoroutine(WaitForFlingChainContinuationCo(Collisions.Count));
+        
+        AddMoving(collision.Attacker.GetComponent<FlingPhysics>());
+
+        if (collision.Target != null)
+            AddMoving(collision.Target.GetComponent<FlingPhysics>());
     }
 
-    private IEnumerator WaitForFlingChainContinuationCo(int chainLength)
+    public IEnumerator WaitForCollisionsToStop()
     {
+        int remaining = UnitsInMotion.Count;
+        List<FlingPhysics> removePile = new();
+
         yield return new WaitForSeconds(ChainWaitDuration);
-        if (Collisions.Count == chainLength)
+
+        while (UnitsInMotion.Count > 0)
         {
-            OnFlingCollisionChainDone?.Invoke();
+            foreach (var unit in UnitsInMotion)
+            {
+                Debug.Log(unit.Speed);
+                if (unit.Speed.sqrMagnitude < 0.04f)
+                {
+                    unit.StopMotion();
+                    removePile.Add(unit);
+                }
+            }
+
+            foreach (var unit in removePile)
+                UnitsInMotion.Remove(unit);
+
+            removePile.Clear();
+
+            yield return new WaitForSeconds(ChainWaitDuration);
         }
     }
 }
