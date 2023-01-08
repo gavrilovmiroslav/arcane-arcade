@@ -97,6 +97,8 @@ public class UnitCardUI
 
     public void Load(UnitScriptable unit)
     {
+        if (unit == null) return;
+
         SkipButton.SetActive(unit.Friend);
 
         NameText.text = unit.Name;

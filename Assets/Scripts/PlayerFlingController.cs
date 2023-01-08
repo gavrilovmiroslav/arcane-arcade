@@ -11,6 +11,11 @@ public class PlayerFlingController
         FlingCollisionManager.Instance.OnFlingCollisionChainDone += React_OnFlingCollisionChainDone;
     }
 
+    public void OnDestroy()
+    {
+        FlingCollisionManager.Instance.OnFlingCollisionChainDone -= React_OnFlingCollisionChainDone;
+    }
+
     private void React_OnFlingCollisionChainDone()
     {
         if (_TurnBasedUnit.Current)
@@ -22,6 +27,12 @@ public class PlayerFlingController
     public void Update()
     {
         if (!_TurnBasedUnit.Current) return;
+
+        if (_TurnBasedUnit.Health <= 0)
+        {
+            FinishTurn();
+            return;
+        }
 
         Timer += Time.deltaTime;
         if (Timer >= 1.0f)

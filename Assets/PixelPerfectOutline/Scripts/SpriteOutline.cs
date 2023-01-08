@@ -73,6 +73,8 @@ public class SpriteOutline : MonoBehaviour
 
     void UpdateProperties()
     {
+        if (spriteRenderer == null || spriteRenderer.sprite == null) return;
+
         Rect spriteRect = spriteRenderer.sprite.rect;
         Vector2 pivot = spriteRenderer.sprite.pivot;
         float pixelsPerUnit = spriteRenderer.sprite.pixelsPerUnit;

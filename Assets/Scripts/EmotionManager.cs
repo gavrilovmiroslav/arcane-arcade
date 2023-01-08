@@ -17,6 +17,7 @@ public class EmotionManager : MonoBehaviour
     public Coroutine Emote<T>(T self, EmotionType emo, int repeats = 1) where T: MonoBehaviour 
     {
         var emotion = Instantiate(EmotionPrefab, self.transform.position + new Vector3(Offset.x, Offset.y, 0.0f), Quaternion.identity);
+        emotion.transform.SetParent(self.transform);
         var emote = emotion.GetComponent<EmotionCom>();
         emotion.transform.localScale *= Scale;
         return emote.PlayEmote(emo, repeats);

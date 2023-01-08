@@ -14,11 +14,20 @@ public class EnemyAIController
         FlingCollisionManager.Instance.OnFlingCollisionChainDone += React_OnFlingCollisionChainDone;
     }
 
+    public void OnDestroy()
+    {
+        TurnManager.Instance.OnUnitChanged -= React_OnUnitChanged;
+        FlingCollisionManager.Instance.OnFlingCollisionChainDone -= React_OnFlingCollisionChainDone;
+    }
+
     private void React_OnUnitChanged(TurnBasedUnit oldUnit, TurnBasedUnit newUnit)
     {
         if (TurnManager.Instance.IsCurrentUnit(this))
         {
-            StartCoroutine(DoAIActionCo());
+            if (_TurnBasedUnit.Definition != null && _TurnBasedUnit.Health > 0)
+                StartCoroutine(DoAIActionCo());
+            else
+                FinishTurn();
         }
     }
 

@@ -30,8 +30,11 @@ public class TurnBasedUnit
             var oldHealth = _Health;
             _Health = value;
             if (_Health < 0) _Health = 0;
-            if (_Health > Definition.Health) _Health = Definition.Health;
-            OnHealthChanged?.Invoke(oldHealth, _Health);
+            if (Definition != null)
+            {
+                if (_Health > Definition.Health) _Health = Definition.Health;
+                OnHealthChanged?.Invoke(oldHealth, _Health);
+            }
         }
     }
 
@@ -41,9 +44,13 @@ public class TurnBasedUnit
         set
         {
             var oldPower = _Power;
-            _Power = value;
+            _Power = value;            
             if (_Power < 0) _Power = 0;
-            OnPowerChanged?.Invoke(oldPower, _Power);
+
+            if (Definition != null)
+            {
+                OnPowerChanged?.Invoke(oldPower, _Power);
+            }
         }
     }
 
@@ -80,8 +87,32 @@ public class TurnBasedUnit
             ai.OnFlingCompleted += React_OnFlingCompleted;
             ai.OnFlingCancelled += React_OnFlingCancelled;
         }
+
+        if (TryGetComponent<TurnArbiterController>(out TurnArbiterController arb))
+        {
+        }
     }
 
+    public void OnDestroy()
+    {
+        if (TryGetComponent<PlayerFlingController>(out PlayerFlingController controller))
+        {
+            controller.OnFlingingStarted -= React_OnFlingingStarted;
+            controller.OnFlingCompleted -= React_OnFlingCompleted;
+            controller.OnFlingCancelled -= React_OnFlingCancelled;
+        }
+
+        if (TryGetComponent<EnemyAIController>(out EnemyAIController ai))
+        {
+            ai.OnFlingingStarted -= React_OnFlingingStarted;
+            ai.OnFlingCompleted -= React_OnFlingCompleted;
+            ai.OnFlingCancelled -= React_OnFlingCancelled;
+        }
+
+        if (TryGetComponent<TurnArbiterController>(out TurnArbiterController arb))
+        {
+        }
+    }
     private void React_OnFlingCompleted(Vector2 fling)
     {
         GameManager.Instance.ShootingTarget.SetActive(false);
@@ -105,14 +136,20 @@ public class TurnBasedUnit
 
     public void Start()
     {
-        Health = Definition.Health;
-        Power = Definition.Power;
+        if (Definition != null)
+        {
+            Health = Definition.Health;
+            Power = Definition.Power;
+        }
     }
 
     public void SetOutlining(bool state)
     {
-        _SpriteOutline.directions = state
-            ? SpriteOutline.Directions.ON
-            : SpriteOutline.Directions.OFF;
+        if (_SpriteOutline != null)
+        {
+            _SpriteOutline.directions = state
+                ? SpriteOutline.Directions.ON
+                : SpriteOutline.Directions.OFF;
+        }
     }
 }

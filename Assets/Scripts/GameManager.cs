@@ -21,8 +21,14 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public event IGamePropertyChanged.TurnCleanupStarted OnTurnCleanupStarted;
     public event IGamePropertyChanged.NextTurnStarted OnStartNextTurn;
     public event IGamePropertyChanged.TurnOrderUnitRegistered OnRegisterTurnOrder;
+
+    public static void BroadcastTurnCleanup()
+    {
+        Instance.OnTurnCleanupStarted?.Invoke();
+    }
 
     public static void BroadcastNextTurn()
     {
@@ -61,6 +67,7 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
         for (int i = 0; i < Config.TargetingIndicatorCount; i++)
         {
             TargetingIndicators.Add(Instantiate(Config.TargetingIndicator, Vector3.zero, Quaternion.identity));
@@ -74,6 +81,8 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f);
         Restart();
+        yield return new WaitForSeconds(0.1f);
+        BroadcastNextTurn();
     }
 
     void AddFlingRequirements(GameObject inst)
@@ -132,6 +141,13 @@ public class GameManager : MonoBehaviour
             freeObstacleStarts.Add(t);
             freeAllStarts.Add(new Location() { kind = LocationKind.Obstacle, place = t });
         }
+
+        // ARBITER
+        var arbiter = new GameObject("Arbiter");
+        arbiter.AddComponent<TurnArbiterController>();
+        var tbu = arbiter.AddComponent<TurnBasedUnit>();
+        tbu.ConnectController();
+        BroadcastTurnOrderRegistration(tbu);
 
         // OBSTACLES
         for (int i = 0; i < Random.Range(8, 20); i++)
@@ -196,8 +212,6 @@ public class GameManager : MonoBehaviour
             var turn = inst.GetComponent<TurnBasedUnit>();
             BroadcastTurnOrderRegistration(turn);
         }
-
-        BroadcastNextTurn();
     }
 
     private void OnGUI()

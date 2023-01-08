@@ -68,15 +68,20 @@ public class AbstractFlingController
         }
     }
 
-    public IEnumerator WaitForFlingToEndCo()
+    protected void FinishTurn()
     {
-        yield return FlingCollisionManager.Instance.WaitForCollisionsToStop();
-
         GameManager.BroadcastNextTurn();
         _FlingChainComplete = false;
         _HasShotAlready = false;
         GameManager.Instance.CameraFollow(null);
         CameraPan.CanPan = true;
         _FlingProcessCoroutine = null;
+    }
+
+    public IEnumerator WaitForFlingToEndCo()
+    {
+        yield return FlingCollisionManager.Instance.WaitForCollisionsToStop();
+
+        FinishTurn();
     }
 }

@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 
 public class TurnManager 
@@ -12,7 +15,7 @@ public class TurnManager
     public event ITurnPropertyChanged.UnitChanged OnUnitChanged;
 
     private UnitVisibility _UnitDescVisibility = UnitVisibility.Shown;
-    private readonly Queue<TurnBasedUnit> _TurnOrder = new();
+    public Queue<TurnBasedUnit> TurnOrder = new();
     public TurnBasedUnit CurrentTurnOwner = null;
     
     public static TurnManager Instance = null;
@@ -48,23 +51,26 @@ public class TurnManager
     private void React_OnStartNextTurn()
     {
         FlingCollisionManager.Instance.ClearCollisions();
+        GameManager.BroadcastTurnCleanup();
 
         var old = CurrentTurnOwner;
         if (CurrentTurnOwner != null)
         {
             CurrentTurnOwner.Current = false;
-            if (CurrentTurnOwner.Health > 0)
+            if (CurrentTurnOwner.Definition == null || CurrentTurnOwner.Health > 0)
             {
-                _TurnOrder.Enqueue(CurrentTurnOwner);
+                TurnOrder.Enqueue(CurrentTurnOwner);
             }
             CurrentTurnOwner = null;
         }
 
-        if (_TurnOrder.Count > 0)
+        if (TurnOrder.Count > 0)
         {
-            var nextUnit = _TurnOrder.Dequeue();
+            var nextUnit = TurnOrder.Dequeue();
+            Debug.Log($"Next up: {nextUnit}");
             nextUnit.Current = true;
             CurrentTurnOwner = nextUnit;
+            Debug.Assert(CurrentTurnOwner != null);
 
             OnUnitChanged?.Invoke(old, CurrentTurnOwner);
         }
@@ -72,6 +78,6 @@ public class TurnManager
 
     private void React_OnRegisterTurnOrder(TurnBasedUnit turn)
     {
-        _TurnOrder.Enqueue(turn);
+        TurnOrder.Enqueue(turn);
     }
 }

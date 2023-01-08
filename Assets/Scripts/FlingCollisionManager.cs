@@ -43,7 +43,10 @@ public class FlingCollisionManager
         AddMoving(collision.Attacker.GetComponent<FlingPhysics>());
 
         if (collision.Target != null)
+        {
             AddMoving(collision.Target.GetComponent<FlingPhysics>());
+            GameManager.Instance.CameraFollow(collision.Target.transform);
+        }            
     }
 
     public IEnumerator WaitForCollisionsToStop()
