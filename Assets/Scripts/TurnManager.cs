@@ -48,10 +48,19 @@ public class TurnManager
         return CurrentTurnOwner.gameObject == t.gameObject;
     }
 
+    public int TurnCleanupTokens = 0;
     private void React_OnStartNextTurn()
     {
+        StartCoroutine(StartNextTurnCo());
+    }
+
+    private IEnumerator StartNextTurnCo()
+    {
         FlingCollisionManager.Instance.ClearCollisions();
+        GameManager.BroadcastPrepareForTurnCleanup();
         GameManager.BroadcastTurnCleanup();
+
+        while (TurnCleanupTokens > 0) yield return new WaitForEndOfFrame();
 
         var old = CurrentTurnOwner;
         if (CurrentTurnOwner != null)
@@ -67,7 +76,6 @@ public class TurnManager
         if (TurnOrder.Count > 0)
         {
             var nextUnit = TurnOrder.Dequeue();
-            Debug.Log($"Next up: {nextUnit}");
             nextUnit.Current = true;
             CurrentTurnOwner = nextUnit;
             Debug.Assert(CurrentTurnOwner != null);
