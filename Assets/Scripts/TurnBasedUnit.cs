@@ -5,15 +5,12 @@ using System.Collections;
 public class TurnBasedUnit 
     : MonoBehaviour
     , IUnitPropertyChanged
-    , IUnitStatsChanged    
     , IReactsToEvent<IFlingingPropertyChanged.FlingingStarted>
     , IReactsToEvent<IFlingingPropertyChanged.FlingCompleted>
     , IReactsToEvent<IFlingingPropertyChanged.FlingingCancelled>
 {
     public event IUnitPropertyChanged.HealthChanged OnHealthChanged;
     public event IUnitPropertyChanged.PowerChanged OnPowerChanged;
-    public event IUnitStatsChanged.EnemyKilled OnEnemyKilled;
-    public event IUnitStatsChanged.UnitLost OnUnitLost;
 
     private SpriteOutline _SpriteOutline;
     private int _Health = 0;

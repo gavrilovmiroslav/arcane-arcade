@@ -56,8 +56,7 @@ public class TurnManager
 
     private IEnumerator StartNextTurnCo()
     {
-        FlingCollisionManager.Instance.ClearCollisions();
-        GameManager.BroadcastPrepareForTurnCleanup();
+        FlingCollisionManager.Instance.ClearCollisions();        
         GameManager.BroadcastTurnCleanup();
 
         while (TurnCleanupTokens > 0) yield return new WaitForEndOfFrame();

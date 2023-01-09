@@ -21,15 +21,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public event IGamePropertyChanged.PrepareForTurnCleanup OnPrepareForTurnCleanup;
     public event IGamePropertyChanged.TurnCleanup OnTurnCleanup;
     public event IGamePropertyChanged.NextTurnStarted OnStartNextTurn;
     public event IGamePropertyChanged.TurnOrderUnitRegistered OnRegisterTurnOrder;
-
-    public static void BroadcastPrepareForTurnCleanup()
-    {
-        Instance.OnPrepareForTurnCleanup?.Invoke();
-    }
 
     public static void BroadcastTurnCleanup()
     {

@@ -1,8 +1,10 @@
-public interface IUnitStatsChanged : IReactiveEventInterface
+using UnityEngine;
+
+public interface IUnitKilledPropertyChanged : IReactiveEventInterface
 {
-    public delegate void EnemyKilled(TurnBasedUnit killed, TurnBasedUnit killedBy);
-    public delegate void UnitLost(TurnBasedUnit killedBy);
+    public delegate void EnemyKilled(UnitScriptable unit, Vector3 position);
+    public delegate void FriendKilled(UnitScriptable unit, Vector3 position);
 
     public event EnemyKilled OnEnemyKilled;
-    public event UnitLost OnUnitLost;
+    public event FriendKilled OnFriendKilled;
 }

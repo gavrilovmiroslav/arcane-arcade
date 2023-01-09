@@ -34,7 +34,7 @@ public class FlingPhysics
 
     IEnumerator EnableHitsCo()
     {
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.5f);
         this.HasAlreadyHit = false;
     }
 
@@ -72,7 +72,7 @@ public class FlingPhysics
 
                 FlingCollisionManager.Instance.AddCollision(flingCollision);
             }
-
+            
             (other._Speed, this._Speed) = (this._Speed, other._Speed);
             this.HasAlreadyHit = true;
         }

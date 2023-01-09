@@ -1,3 +1,7 @@
+using System.Collections;
+
+using UnityEngine;
+
 public enum UnitVisibility
 {
     Hidden,
